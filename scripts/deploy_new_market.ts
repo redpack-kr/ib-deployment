@@ -9,8 +9,8 @@ enum IRM {
 }
 
 const crSymbol = 'iUST';
-const crName = 'Iron Bank Axelar Wrapped UST';
-const underlyingAddress = '0x260Bbf5698121EB85e7a74f2E45E16Ce762EbE11';
+const crName = 'Iron Bank UST (Wormhole)';
+const underlyingAddress = '0xb599c3590F42f8F995ECfa0f85D2980B76862fc1';
 const interestRateModel = IRM.Stable;
 const exchangeRate = '0.02';
 
