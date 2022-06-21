@@ -30,7 +30,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     log: true
   });
 
-  multiplier = parseEther('0.23');
+  multiplier = parseEther('0.18');
   jump = parseEther('8');
 
   await deploy('StableIRM', {

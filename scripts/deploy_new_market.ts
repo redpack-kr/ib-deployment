@@ -8,11 +8,11 @@ enum IRM {
   Gov = 'GovIRM'
 }
 
-const crSymbol = 'iUST';
-const crName = 'Iron Bank UST (Wormhole)';
-const underlyingAddress = '0xb599c3590F42f8F995ECfa0f85D2980B76862fc1';
+const crSymbol = 'iUSDC';
+const crName = 'Iron Bank USD Coin';
+const underlyingAddress = '0x3e22e37Cb472c872B5dE121134cFD1B57Ef06560';
 const interestRateModel = IRM.Stable;
-const exchangeRate = '0.02';
+const exchangeRate = '0.01';
 
 
 async function main() {

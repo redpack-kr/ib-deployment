@@ -380,7 +380,7 @@ contract Exponential is ErrorReporter, CarefulMath {
     }
 }
 
-contract PriceOracle is Exponential {
+contract PriceOracleV1 is Exponential {
     /**
      * @dev flag for whether or not contract is paused
      *

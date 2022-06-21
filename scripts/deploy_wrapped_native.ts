@@ -2,8 +2,8 @@ import {deployments, ethers, getNamedAccounts} from 'hardhat';
 const {parseUnits} = ethers.utils;
 const {deploy, execute, get, getArtifact} = deployments;
 
-const crSymbol = 'crWAVAX';
-const crName = 'Cream Wrapped AVAX';
+const crSymbol = 'iWETH';
+const crName = 'Iron Bank Wrapped Ethereum';
 
 async function main() {
   const {deployer, wrappedNative} = await getNamedAccounts();
@@ -16,7 +16,7 @@ async function main() {
 
   const underlying = await ethers.getContractAt(erc20ABI, wrappedNative);
   const underlyingDecimal = await underlying.decimals();
-  const initialExchangeRate = parseUnits('0.02', 18 + underlyingDecimal - 8);
+  const initialExchangeRate = parseUnits('0.01', 18 + underlyingDecimal - 8);
 
   const result = await deploy(crSymbol, {
     from: deployer,
