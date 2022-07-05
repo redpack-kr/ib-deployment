@@ -3,56 +3,65 @@ const {parseEther} = ethers.utils;
 const {execute, get} = deployments;
 
 const markets = [
-  '0x338EEE1F7B89CE6272f302bDC4b952C13b221f1d',
-  '0xCEb1cE674f38398432d20bc8f90345E91Ef46fd3',
-  '0xe28965073C49a02923882B8329D3E8C1D805E832',
-  '0x085682716f61a72bf8C573FBaF88CCA68c60E99B',
-  '0xB09b75916C5F4097C8b5812E63e216FEF97661Fc',
-  '0x18931772Adb90e7f214B6CbC78DdD6E0F090D4B1'
+  '0x17533a1bDe957979E3977EbbFBC31E6deeb25C7d',
+  '0x1d073cf59Ae0C169cbc58B6fdD518822ae89173a',
+  '0x874C01c2d1767EFA01Fa54b2Ac16be96fAd5a742',
+  '0x049E04bEE77cFfB055f733A138a2F204D3750283',
+  '0xcdb9b4db65C913aB000b40204248C8A53185D14D',
+  // '0x4645e0952678E9566FB529D9313f5730E4e1C412',
 ];
 
 const cfs = [
+  parseEther('0.85'),
+  parseEther('0.85'),
+  parseEther('0.8'),
+  parseEther('0.8'),
   parseEther('0.75'),
-  parseEther('0.75'),
-  parseEther('0.75'),
-  parseEther('0.75'),
-  parseEther('0.75'),
-  parseEther('0.45'),
+  // parseEther('0.5'),
+];
+
+const ccaps = [
+  '20000000000000',
+  '20000000000000000',
+  '10000000000000000',
+  '10000000000000000',
+  '250000000000',
+  // '2000000000000000',
 ];
 
 const rfs = [
-  parseEther('0.20'),
-  parseEther('0.15'),
-  parseEther('0.15'),
-  parseEther('0.15'),
-  parseEther('0.20'),
-  parseEther('0.40'),
+  parseEther('0.10'),
+  parseEther('0.10'),
+  parseEther('0.10'),
+  parseEther('0.10'),
+  parseEther('0.10'),
+  // parseEther('0.20'),
 ];
 
 const sources = [
-  '0x976B3D034E162d8bD72D6b9C989d545b839003b0',
-  '0xEBE676ee90Fe1112671f19b6B7459bC678B67e8a',
-  '0xF096872672F44d6EBA71458D74fe67F9a77a23B9',
-  '0x51D7180edA2260cc4F6e4EebB82FEF5c3c2B8300',
-  '0x2779D32d5166BAaa2B2b658333bA7e6Ec0C65743',
-  '0x49ccd9ca821EfEab2b98c60dC60F518E765EDe9a',
+  '0x13e3Ee699D1909E989722E753853AE30b17e08c5',
+  '0x16a9FA2FDa030272Ce99B29CF780dFA30361E0f3',
+  '0xECef79E109e997bCA29c1c0897ec9d7b03647F5E',
+  '0x8dBa75e83DA73cc766A7e5a0ee71F656BAb470d6',
+  '0xD702DD976Fb76Fffc2D3963D037dfDae5b04E593',
 ];
 
 
 async function main() {
   const {deployer} = await getNamedAccounts();
 
-  const wrappedNativeMarket = '0xb3c68d69E95B095ab4b33B4cB67dBc0fbF3Edf56';
+  const wrappedNativeMarket = '0x17533a1bDe957979E3977EbbFBC31E6deeb25C7d';
 
-  await execute('PriceOracleProxyUSD', { from: deployer }, '_setAggregators', markets, sources, Array(markets.length).fill(0));
+  await execute('PriceOracleProxyUSD', { from: deployer, log: true }, '_setAggregators', markets, sources, Array(markets.length).fill(0));
 
   for (let i=0; i < markets.length; i++) {
-    await execute('CTokenAdmin', { from: deployer }, '_setReserveFactor', markets[i], rfs[i]);
-    await execute('Comptroller', { from: deployer }, '_supportMarket', markets[i], markets[i] == wrappedNativeMarket ? 2 : 1);
-    // await execute('Comptroller', { from: deployer }, '_setCollateralFactor', markets[i], cfs[i]);
+    await execute('Comptroller', { from: deployer, log: true }, '_supportMarket', markets[i], markets[i] == wrappedNativeMarket ? 2 : 1);
+    await execute('CTokenAdmin', { from: deployer, log: true }, '_setReserveFactor', markets[i], rfs[i]);
+    if (markets[i] != wrappedNativeMarket) {
+      await execute('CTokenAdmin', { from: deployer, log: true }, '_setCollateralCap', markets[i], ccaps[i]);
+    }
+    await execute('Comptroller', { from: deployer, log: true }, '_setCollateralFactor', markets[i], cfs[i]);
   }
-
-  await execute('FlashloanLender', { from: deployer }, 'updateUnderlyingMapping', markets);
 }
 
 main()

@@ -8,10 +8,10 @@ enum IRM {
   Gov = 'GovIRM'
 }
 
-const crSymbol = 'iUSDC';
-const crName = 'Iron Bank USD Coin';
-const underlyingAddress = '0x3e22e37Cb472c872B5dE121134cFD1B57Ef06560';
-const interestRateModel = IRM.Stable;
+const crSymbol = 'iOP';
+const crName = 'Iron Bank Optimism';
+const underlyingAddress = '0x4200000000000000000000000000000000000042';
+const interestRateModel = IRM.Major;
 const exchangeRate = '0.01';
 
 
