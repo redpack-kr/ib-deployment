@@ -1,13 +1,41 @@
-import 'dotenv/config';
-import {HardhatUserConfig} from 'hardhat/types';
-import 'hardhat-deploy';
+// import 'dotenv/config';
+// import {HardhatUserConfig} from 'hardhat/types';
+import { config as dotEnvConfig } from "dotenv";
+dotEnvConfig();
+
+//import "@nomicfoundation/hardhat-toolbox";
+import "@nomiclabs/hardhat-waffle";
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-etherscan';
+import "@typechain/hardhat"; //enable "hardhat typechain"
+import 'hardhat-deploy';
 import 'hardhat-contract-sizer';
 import './tasks';
 
-const config: HardhatUserConfig = {
+module.exports = {
   defaultNetwork: 'hardhat',
+  networks: {
+    hardhat: {
+      chainId: 31337,
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000,
+      hardfork: "berlin", // use berlin in test to avoid issues with gas price 0
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+        accountsBalance: "100000000000000000000000000000000000",
+      },
+    },
+    ethereum: {
+      url: process.env.ETH_MAINNET_RPC,
+      accounts: [process.env.ETH_MAINNET_PRIVATE_KEY],
+    },
+    eth_mainnetfork: {
+      url: process.env.FORK_RPC,
+      accounts: [process.env.FUNDED_PRIVATE_KEY, process.env.ETH_MAINNET_PRIVATE_KEY],
+    },
+  },
   solidity: {
     compilers: [
       {
@@ -65,54 +93,19 @@ const config: HardhatUserConfig = {
       kovOp: '0x3e22e37Cb472c872B5dE121134cFD1B57Ef06560',
     }
   },
-  networks: {
-    hardhat: {
-      forking: {
-        url: `https://mainnet.infura.io/v3/${process.env.INFURA_TOKEN}`
-      }
-    },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${process.env.INFURA_TOKEN}`,
-      accounts: [`0x${process.env.DEPLOY_PRIVATE_KEY ?? ''}`]
-    },
-    arbitrum: {
-      url: 'https://arb1.arbitrum.io/rpc',
-      accounts: [`0x${process.env.DEPLOY_PRIVATE_KEY ?? ''}`]
-    },
-    avalanche: {
-      url: 'https://api.avax.network/ext/bc/C/rpc',
-      chainId: 43114,
-      accounts: [`0x${process.env.DEPLOY_PRIVATE_KEY ?? ''}`]
-    },
-    polygon: {
-      url: 'https://polygon-rpc.com',
-      accounts: [`0x${process.env.DEPLOY_PRIVATE_KEY ?? ''}`]
-    },
-    bsc: {
-      url: 'https://bsc-dataseed.binance.org/',
-      accounts: [`0x${process.env.DEPLOY_PRIVATE_KEY ?? ''}`]
-    },
-    fantom: {
-      url: 'https://rpc.ftm.tools/',
-      accounts: [`0x${process.env.DEPLOY_PRIVATE_KEY ?? ''}`]
-    },
-    op: {
-      url: `https://optimism-mainnet.infura.io/v3/${process.env.INFURA_TOKEN}`,
-      accounts: [`0x${process.env.DEPLOY_PRIVATE_KEY ?? ''}`]
-    },
-    kovOp: {
-      url: 'https://kovan.optimism.io',
-      accounts: [`0x${process.env.TESTNET_PRIVATE_KEY ?? ''}`]
-    }
+  paths: {
+    sources: "./contracts/",
+    tests: "./tests",
+    cache: "./cache",
+    artifacts: "./artifacts",
   },
-  etherscan: {
-    apiKey: {
-        mainnet: process.env.ETHERSCAN_API_KEY ?? '',
-        avalanche: process.env.SNOWSCAN_API_KEY ?? '',
-        opera: process.env.FTMSCAN_API_KEY ?? '',
-        optimisticEthereum: process.env.OPSCAN_API_KEY ?? '',
-    }
-  }
+  typechain: {
+    outDir: "./typechain",
+    target: process.env.TYPECHAIN_TARGET || "ethers-v5",
+  },
+  mocha: {
+    timeout: 100000,
+  },
 };
 
-export default config;
+//export default config;
