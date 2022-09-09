@@ -13,6 +13,10 @@ import {
   IERC20__factory,
   CErc20,
   CErc20__factory,
+  CErc20Delegate,
+  CErc20Delegate__factory,
+  CErc20Delegator,
+  CErc20Delegator__factory
 } from '../typechain/'
 
 
@@ -39,7 +43,7 @@ async function main() {
   //await WETH_Panda.approve('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', ethers.utils.parseEther('30000.0'));
 
   console.log("[*] Panda deplosit ETH in WETH Contract");
-  await WETH_Panda.deposit({value:ethers.utils.parseEther('10000.0')});
+  await WETH_Panda.deposit({value:ethers.utils.parseEther('100000.0')});
   
   console.log("[*] Panda ETH : %f", ethers.utils.formatEther(await Panda.getBalance()));
   console.log("[*] Panda WETH : %f", ethers.utils.formatEther(await WETH_Panda.balanceOf(PandaAddr)));
@@ -64,9 +68,20 @@ async function main() {
   //  return cTokenInterface.mint(amount);
   //}
 
+  console.log("[*] ===============================Supply Unit Test================================");
   //STEP#2-0 : Panda connect to cyWETH
+  const cyWETH_Panda = CErc20Delegator__factory.connect('0x41c84c0e2EE0b740Cf0d31F63f3B6F627DC6b393', Panda);
   //STEP#2-1 : approve button
+  await WETH_Panda.approve('0x41c84c0e2EE0b740Cf0d31F63f3B6F627DC6b393', ethers.utils.parseEther('30000.0'));
+
   //STEP#2-2 : supply button
+  await cyWETH_Panda.mint(ethers.utils.parseEther('10000.0'));
+
+  console.log("[*] Panda ETH : %f", ethers.utils.formatEther(await Panda.getBalance()));
+  console.log("[*] Panda WETH : %f", ethers.utils.formatEther(await WETH_Panda.balanceOf(PandaAddr)));
+  //console.log("[*] Panda WETH : %f", ethers.utils.formatEther(await cyWETH_Panda.balanceOfUnderlying(PandaAddr)));
+  console.log("[*] Panda cyWETH : %f", ethers.utils.formatEther(await cyWETH_Panda.balanceOf(PandaAddr)));
+  console.log("[*] Supply Testing Done!");
 }//end of main
 
 main()
